@@ -13,7 +13,7 @@ struct svf {
     float lowgain;
     float bandgain;
     float highgain;
-    svf(float sample_rate) : z1(0.0f), z2(0.0f), sample_rate(sample_rate), freq(1.0), q(0.5), lowgain(0.0), bandgain(0.0), highgain(0.0) {
+    svf(float sample_rate) : z1(0.0f), z2(0.0f), sample_rate(sample_rate), freq(0.01), q(0.5), lowgain(0.0), bandgain(0.0), highgain(0.0) {
 
     }
 };
