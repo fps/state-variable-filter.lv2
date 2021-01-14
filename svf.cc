@@ -13,7 +13,8 @@ struct svf {
     float lowgain;
     float bandgain;
     float highgain;
-    svf(float sample_rate) : z1(0.0f), z2(0.0f), sample_rate(sample_rate), freq(0.01), q(0.5), lowgain(0.0), bandgain(0.0), highgain(0.0) {
+    unsigned frame_index;
+    svf(float sample_rate) : z1(0.0f), z2(0.0f), sample_rate(sample_rate), freq(0.01), q(0.5), lowgain(0.0), bandgain(0.0), highgain(0.0), frame_index(0) {
 
     }
 };
@@ -35,6 +36,8 @@ static void connect_port(LV2_Handle instance, uint32_t port, void *data_location
 
 #define ALPHA 0.99f
 
+#define PARAM_UPDATE 8
+
 static void run(LV2_Handle instance, uint32_t sample_count)
 {
     svf *tinstance = (svf*)(instance);
@@ -47,12 +50,16 @@ static void run(LV2_Handle instance, uint32_t sample_count)
 
     for(uint32_t sample_index = 0; sample_index < sample_count; ++sample_index)
     {
-        tinstance->freq = ALPHA * tinstance->freq + (1.0f - ALPHA) * p_freq;
-        tinstance->q = ALPHA * tinstance->q + (1.0f - ALPHA) * p_q;
-        tinstance->lowgain = ALPHA * tinstance->lowgain + (1.0f - ALPHA) * p_lowgain;
-        tinstance->bandgain = ALPHA * tinstance->bandgain + (1.0f - ALPHA) * p_bandgain;
-        tinstance->highgain = ALPHA * tinstance->highgain + (1.0f - ALPHA) * p_highgain;
-
+        ++(tinstance->frame_index);
+        if (0 == tinstance->frame_index % PARAM_UPDATE)
+        {
+            tinstance->freq = ALPHA * tinstance->freq + (1.0f - ALPHA) * p_freq;
+            tinstance->q = ALPHA * tinstance->q + (1.0f - ALPHA) * p_q;
+            tinstance->lowgain = ALPHA * tinstance->lowgain + (1.0f - ALPHA) * p_lowgain;
+            tinstance->bandgain = ALPHA * tinstance->bandgain + (1.0f - ALPHA) * p_bandgain;
+            tinstance->highgain = ALPHA * tinstance->highgain + (1.0f - ALPHA) * p_highgain;
+        }
+ 
         const float w = 2.0f * tanf(M_PI * tinstance->freq);
         const float a = w / tinstance->q;
         const float b = w*w;
