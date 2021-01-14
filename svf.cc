@@ -14,7 +14,7 @@ struct svf {
     float bandgain;
     float highgain;
     unsigned frame_index;
-    svf(float sample_rate) : z1(0.0f), z2(0.0f), sample_rate(sample_rate), freq(0.01), q(0.5), lowgain(0.0), bandgain(0.0), highgain(0.0), frame_index(0) {
+    svf(float sample_rate) : z1(0.0f), z2(0.0f), sample_rate(sample_rate), freq(0.01f), q(0.5f), lowgain(0.0f), bandgain(0.0f), highgain(0.0f), frame_index(0) {
 
     }
 };
