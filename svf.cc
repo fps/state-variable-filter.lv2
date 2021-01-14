@@ -79,7 +79,7 @@ static void run(LV2_Handle instance, uint32_t sample_count)
 }
 
 static const LV2_Descriptor descriptor = {
-    "http://fps.io/plugins/state-variable-filter",
+    "http://fps.io/plugins/state-variable-filter-v0",
     instantiate,
     connect_port,
     nullptr, // activate
