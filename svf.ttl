@@ -27,7 +27,7 @@
     lv2:index 2 ;
     lv2:symbol "freq" ;
     lv2:name "Frequency (rad/s)";
-    lv2:default 0.5 ;
+    lv2:default 0.01 ;
     lv2:minimum 0.0 ;
     lv2:maximum 1.0 ;
   ] , [
