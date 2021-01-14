@@ -3,7 +3,7 @@
 @prefix doap: <http://usefulinc.com/ns/doap#> .
 
 <http://fps.io/plugins/state-variable-filter> a lv2:Plugin ;
-  doap:name "clipping.tanh";
+  doap:name "state-variable-filter";
   doap:license <http://usefulinc.com/doap/licenses/gpl> ;
   doap:description "Implements a digital state-variable filter with low, band and highpass filter with Q control." ;
   lv2:binary <svf.so> ;
