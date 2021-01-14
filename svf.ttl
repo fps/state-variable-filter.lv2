@@ -1,0 +1,69 @@
+@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix doap: <http://usefulinc.com/ns/doap#> .
+
+<http://fps.io/plugins/state-variable-filter> a lv2:Plugin ;
+  doap:name "clipping.tanh";
+  doap:license <http://usefulinc.com/doap/licenses/gpl> ;
+  doap:description "Implements a digital state-variable filter with low, band and highpass filter with Q control." ;
+  lv2:binary <svf.so> ;
+  lv2:optionalFeature lv2:hardRTCapable ;
+  lv2:port [
+    a lv2:AudioPort ;
+    a lv2:InputPort ;
+    lv2:index 0 ;
+    lv2:symbol "in" ;
+    lv2:name "In"
+  ] , [
+    a lv2:AudioPort ;
+    a lv2:OutputPort ;
+    lv2:index 1 ;
+    lv2:symbol "out" ;
+    lv2:name "Out"
+  ] , [
+    a lv2:InputPort ;
+    a lv2:ControlPort ;
+    lv2:index 2 ;
+    lv2:symbol "freq" ;
+    lv2:name "Frequency (rad/s)";
+    lv2:default 0.5 ;
+    lv2:minimum 0.0 ;
+    lv2:maximum 1.0 ;
+  ] , [
+    a lv2:InputPort ;
+    a lv2:ControlPort ;
+    lv2:index 3 ;
+    lv2:symbol "q" ;
+    lv2:name "Q";
+    lv2:default 0.5 ;
+    lv2:minimum 0.0 ;
+    lv2:maximum 10.0 ;
+  ] , [
+    a lv2:InputPort ;
+    a lv2:ControlPort ;
+    lv2:index 4 ;
+    lv2:symbol "lowgain" ;
+    lv2:name "Lowpass-Gain (dB)";
+    lv2:default 1.0 ;
+    lv2:minimum -96.0 ;
+    lv2:maximum 32.0 ;
+  ] , [
+    a lv2:InputPort ;
+    a lv2:ControlPort ;
+    lv2:index 4 ;
+    lv2:symbol "bandgain" ;
+    lv2:name "Bandpass-Gain (dB)";
+    lv2:default 1.0 ;
+    lv2:minimum -96.0 ;
+    lv2:maximum 32.0 ;
+  ]  , [
+    a lv2:InputPort ;
+    a lv2:ControlPort ;
+    lv2:index 4 ;
+    lv2:symbol "highgain" ;
+    lv2:name "Highpass-Gain (dB)";
+    lv2:default 1.0 ;
+    lv2:minimum -96.0 ;
+    lv2:maximum 32.0 ;
+  ]  .
+
