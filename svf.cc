@@ -7,14 +7,15 @@ struct svf {
     float *ports[7];
     float z1;
     float z2;
-    svf() : z1(0.0f), z2(0.0f) {
+    float sample_rate;
+    svf(float sample_rate) : z1(0.0f), z2(0.0f), sample_rate(sample_rate) {
 
     }
 };
 
 static LV2_Handle instantiate(const LV2_Descriptor *descriptor, double sample_rate, const char *bundle_path, const LV2_Feature *const *features)
 {
-    return (LV2_Handle)(new svf);
+    return (LV2_Handle)(new svf(sample_rate));
 }
 
 static void cleanup(LV2_Handle instance)
@@ -31,7 +32,7 @@ static void run(LV2_Handle instance, uint32_t sample_count)
 {
     svf *tinstance = (svf*)(instance);
 
-    const float freq = tinstance->ports[2][0];
+    const float freq = tinstance->ports[2][0] / tinstance->sample_rate;
     const float q = tinstance->ports[3][0];
     const float lowgain = db_to_gain(tinstance->ports[4][0]);
     const float bandgain = db_to_gain(tinstance->ports[5][0]);
