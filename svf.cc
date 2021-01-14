@@ -8,7 +8,12 @@ struct svf {
     float z1;
     float z2;
     float sample_rate;
-    svf(float sample_rate) : z1(0.0f), z2(0.0f), sample_rate(sample_rate) {
+    float freq;
+    float q;
+    float lowgain;
+    float bandgain;
+    float highgain;
+    svf(float sample_rate) : z1(0.0f), z2(0.0f), sample_rate(sample_rate), freq(1.0), q(0.5), lowgain(0.0), bandgain(0.0), highgain(0.0) {
 
     }
 };
@@ -28,37 +33,45 @@ static void connect_port(LV2_Handle instance, uint32_t port, void *data_location
     ((svf*)instance)->ports[port] = (float*)data_location;
 }
 
+#define ALPHA 0.99f
+
 static void run(LV2_Handle instance, uint32_t sample_count)
 {
     svf *tinstance = (svf*)(instance);
 
-    const float freq = tinstance->ports[2][0] / tinstance->sample_rate;
-    const float q = tinstance->ports[3][0];
-    const float lowgain = db_to_gain(tinstance->ports[4][0]);
-    const float bandgain = db_to_gain(tinstance->ports[5][0]);
-    const float highgain = db_to_gain(tinstance->ports[6][0]);
-
-    const float w = 2 * tanf(M_PI * freq);
-    const float a = w / q;
-    const float b = w*w;
-    const float c1 = (a + b)/(1 + 0.5f*a + 0.25f * b);
-    const float c2 = b / (a + b);
-    
-    const float d0_high = 1 - 0.5f * c1 + c1 * c2 * 0.25f;
-    const float d1_band = 1 - c2;
-    const float d0_band = d1_band * c1 * 0.5f;
-    const float d0_low = c1 * c2 * 0.25f;
+    const float p_freq = tinstance->ports[2][0] / tinstance->sample_rate;
+    const float p_q = tinstance->ports[3][0];
+    const float p_lowgain = db_to_gain(tinstance->ports[4][0]);
+    const float p_bandgain = db_to_gain(tinstance->ports[5][0]);
+    const float p_highgain = db_to_gain(tinstance->ports[6][0]);
 
     for(uint32_t sample_index = 0; sample_index < sample_count; ++sample_index)
     {
+        tinstance->freq = ALPHA * tinstance->freq + (1.0f - ALPHA) * p_freq;
+        tinstance->q = ALPHA * tinstance->q + (1.0f - ALPHA) * p_q;
+        tinstance->lowgain = ALPHA * tinstance->lowgain + (1.0f - ALPHA) * p_lowgain;
+        tinstance->bandgain = ALPHA * tinstance->bandgain + (1.0f - ALPHA) * p_bandgain;
+        tinstance->highgain = ALPHA * tinstance->highgain + (1.0f - ALPHA) * p_highgain;
+
+        const float w = 2.0f * tanf(M_PI * tinstance->freq);
+        const float a = w / tinstance->q;
+        const float b = w*w;
+        const float c1 = (a + b)/(1 + 0.5f*a + 0.25f * b);
+        const float c2 = b / (a + b);
+        
+        const float d0_high = 1.0f - 0.5f * c1 + c1 * c2 * 0.25f;
+        const float d1_band = 1.0f - c2;
+        const float d0_band = d1_band * c1 * 0.5f;
+        const float d0_low = c1 * c2 * 0.25f;
+    
         const float in = tinstance->ports[0][sample_index];
         float out = 0;
 
         const float x = in - tinstance->z1 - tinstance->z2;
-        out += highgain * d0_high * x;
-        out += bandgain * (d0_band * x + d1_band * tinstance->z1);
+        out += tinstance->highgain * d0_high * x;
+        out += tinstance->bandgain * (d0_band * x + d1_band * tinstance->z1);
         tinstance->z2 += c2 * tinstance->z1;
-        out += lowgain * (d0_low * x + tinstance->z2);
+        out += tinstance->lowgain * (d0_low * x + tinstance->z2);
         tinstance->z1 += c1 * x;
 
         tinstance->ports[1][sample_index] = out;
