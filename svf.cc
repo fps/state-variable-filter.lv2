@@ -67,7 +67,7 @@ static void run(LV2_Handle instance, uint32_t sample_count)
         const float in = tinstance->ports[0][sample_index];
         float out = 0;
 
-        const float x = in - tinstance->z1 - tinstance->z2;
+        const float x = in - tinstance->z1 - tinstance->z2 + 1e-10f;
         out += tinstance->highgain * d0_high * x;
         out += tinstance->bandgain * (d0_band * x + d1_band * tinstance->z1);
         tinstance->z2 += c2 * tinstance->z1;
