@@ -3,8 +3,8 @@
 @prefix doap: <http://usefulinc.com/ns/doap#> .
 @prefix units: <http://lv2plug.in/ns/extensions/units#> .
 
-<http://fps.io/plugins/state-variable-filter-v0> a lv2:Plugin ;
-  doap:name "state-variable-filter-v0";
+<http://fps.io/plugins/state-variable-filter-v1> a lv2:Plugin ;
+  doap:name "state-variable-filter-v1";
   doap:license <http://usefulinc.com/doap/licenses/gpl> ;
   doap:description "Implements a digital state-variable filter with low, band and highpass filter with Q control." ;
   lv2:binary <svf.so> ;
