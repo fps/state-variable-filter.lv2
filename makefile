@@ -1,6 +1,11 @@
 .PHONY: all
 
-all: svf-v1.so
+VERSION=v2
 
-svf-v1.so: common.cc svf.cc
-	g++ -O3 -ffast-math -Wall  -o svf-v1.so -shared svf.cc
+all: svf-$(VERSION).so manifest.ttl svf-$(VERSION).ttl
+
+svf.cc: svf.cc.in
+	cat svf.cc.in | sed -e 's/VERSION/$(VERSION)/g' > svf.cc
+
+svf-$(VERSION).so: common.cc svf.cc
+	g++ -O3 -ffast-math -Wall  -o svf-$(VERSION).so -shared svf.cc
