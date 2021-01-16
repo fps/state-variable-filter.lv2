@@ -50,7 +50,6 @@ static void run(LV2_Handle instance, uint32_t sample_count)
 
     for(uint32_t sample_index = 0; sample_index < sample_count; ++sample_index)
     {
-        ++(tinstance->frame_index);
         if (0 == tinstance->frame_index % PARAM_UPDATE)
         {
             tinstance->freq = ALPHA * tinstance->freq + (1.0f - ALPHA) * p_freq;
@@ -59,6 +58,7 @@ static void run(LV2_Handle instance, uint32_t sample_count)
             tinstance->bandgain = ALPHA * tinstance->bandgain + (1.0f - ALPHA) * p_bandgain;
             tinstance->highgain = ALPHA * tinstance->highgain + (1.0f - ALPHA) * p_highgain;
         }
+        ++(tinstance->frame_index);
  
         const float w = 2.0f * tanf(M_PI * tinstance->freq);
         const float a = w / tinstance->q;
