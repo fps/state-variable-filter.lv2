@@ -8,10 +8,10 @@
   doap:name "state-variable-filter-VERSION";
   doap:maintainer [
     foaf:name "Florian Paul Schmidt" ;
-    foaf:mbox "mista.tapas@gmx.net" ;
+    foaf:mbox "mailto:mista.tapas@gmx.net" ;
   ] ;
   doap:license <http://usefulinc.com/doap/licenses/gpl> ;
-  doap:description "Implements a digital state-variable filter with low, band and highpass filter with Q control." ;
+  doap:description "Implements a digital state-variable filter with lowpass, bandpass and highpass output components and a Q control." ;
   lv2:binary <svf-VERSION.so> ;
   lv2:optionalFeature lv2:hardRTCapable ;
   lv2:port [
