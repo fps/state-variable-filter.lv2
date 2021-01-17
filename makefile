@@ -1,4 +1,4 @@
-.PHONY: all install
+.PHONY: all install clean
 
 VERSION = v2
 
@@ -21,3 +21,6 @@ svf-$(VERSION).so: common.cc svf.cc
 install:
 	install -d $(PREFIX)/svf-$(VERSION)
 	cp -f manifest.ttl svf.ttl svf-$(VERSION).so $(PREFIX)/svf-$(VERSION)
+
+clean:
+	rm -f manifest.ttl svf.ttl svf-$(VERSION).so svf.cc
