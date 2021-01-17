@@ -16,7 +16,7 @@ manifest.ttl: manifest.ttl.in
 	cat manifest.ttl.in | sed -e 's/VERSION/$(VERSION)/g' > manifest.ttl
 
 svf-$(VERSION).so: common.cc svf.cc
-	g++ -O3 -ffast-math -Wall  -o svf-$(VERSION).so -shared svf.cc
+	g++ -O3 -ffast-math -Wall -Wextra -o svf-$(VERSION).so -shared svf.cc
 
 install:
 	install -d $(PREFIX)/svf-$(VERSION)
