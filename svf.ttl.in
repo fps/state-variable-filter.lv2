@@ -12,7 +12,7 @@
   ] ;
   doap:license <http://usefulinc.com/doap/licenses/gpl> ;
   doap:description "Implements a digital state-variable filter with low, band and highpass filter with Q control." ;
-  lv2:binary <svf-v1.so> ;
+  lv2:binary <svf-VERSION.so> ;
   lv2:optionalFeature lv2:hardRTCapable ;
   lv2:port [
     a lv2:AudioPort ;

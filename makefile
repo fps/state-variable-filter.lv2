@@ -1,6 +1,8 @@
-.PHONY: all
+.PHONY: all install
 
-VERSION=v2
+VERSION = v2
+
+PREFIX ?= /usr/local/lv2
 
 all: svf-$(VERSION).so manifest.ttl svf-$(VERSION).ttl
 
@@ -15,3 +17,7 @@ manifest.ttl: manifest.ttl.in
 
 svf-$(VERSION).so: common.cc svf.cc
 	g++ -O3 -ffast-math -Wall  -o svf-$(VERSION).so -shared svf.cc
+
+install:
+	install -d $(PREFIX)/svf-$(VERSION)
+	cp -f manifest.ttl svf-$(VERSION).ttl svf-$(VERSION).so $(PREFIX)/svf-$(VERSION)
