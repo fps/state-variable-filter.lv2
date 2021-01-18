@@ -1,4 +1,4 @@
-.PHONY: all install clean
+.PHONY: all install clean submodules
 
 VERSION = v2
 
@@ -15,8 +15,11 @@ svf.ttl: svf.ttl.in
 manifest.ttl: manifest.ttl.in
 	cat manifest.ttl.in | sed -e 's/VERSION/$(VERSION)/g' > manifest.ttl
 
-svf-$(VERSION).so: common.cc svf.cc
+svf-$(VERSION).so: common.cc svf.cc submodules
 	g++ -O3 -ffast-math -Wall -Wextra -o svf-$(VERSION).so -shared svf.cc
+
+submodules:
+	make -C state-variable-filter
 
 install:
 	install -d $(PREFIX)/svf-$(VERSION)
