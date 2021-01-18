@@ -1,0 +1,168 @@
+#include <cmath>
+
+#ifndef STATE_VARIABLE_FILTER_VERSION_HH
+
+namespace svf_VERSION {
+
+struct common_processing_result
+{
+  float w;
+  float a;
+  float b;
+  float c1;
+  float c2;
+};
+
+inline common_processing_result process_common(const float freq, const float q)
+{
+  const float w = 2.0f * tanf(M_PI * freq);
+  const float a = w / q;
+  const float b = w*w;
+  const float c1 = (a + b)/(1 + 0.5f*a + 0.25f * b);
+  const float c2 = b / (a + b);
+
+  return common_processing_result 
+  {
+    w, a, b, c1, c2
+  };
+}
+
+struct state {
+  float z1;
+  float z2;
+
+  state() : 
+    z1(0.0f), 
+    z2(0.0f)
+  {
+
+  }
+};
+
+struct d1d0
+{ 
+  float d1; 
+  float d0; 
+};
+
+inline float calculate_d0_high(const common_processing_result res)
+{
+  return 1.0f - 0.5f * res.c1 + res.c1 * res.c2 * 0.25f;
+}
+
+inline d1d0 calculate_d1d0_band(const common_processing_result res)
+{
+  const float d1_band = 1.0f - res.c2;
+  const float d0_band = d1_band * res.c1 * 0.5f;
+  return d1d0
+  {
+    d1_band,
+    d0_band
+  };
+}
+
+inline float calculate_d0_low(const common_processing_result res)
+{
+  return res.c1 * res.c2 * 0.25f;
+}
+
+struct lowbandhighpass
+{
+  state s;
+
+  void process(float *input_buffer, float *output_buffer, unsigned int sample_count, const float highgain, const float bandgain, const float lowgain, float freq, float q)
+  {
+      const common_processing_result res = process_common(freq, q);
+
+      const float d0_high = calculate_d0_high(res);
+      d1d0 d1d0_band = calculate_d1d0_band(res);
+      const float d0_low = calculate_d0_low(res);
+      
+      for (unsigned int sample_index = 0; sample_index < sample_count; ++sample_index)
+      { 
+        const float in = input_buffer[sample_index];
+        float out = 0;
+
+        const float x = in - s.z1 - s.z2 + 1e-20f;
+        out += highgain * d0_high * x;
+        out += bandgain * (d1d0_band.d0 * x + d1d0_band.d1 * s.z1);
+        s.z2 += res.c2 * s.z1;
+        out += lowgain * (d0_low * x + s.z2);
+        s.z1 += res.c1 * x;
+
+        output_buffer[sample_index] = out;
+      }
+   }
+};
+
+struct highpass
+{
+  state s;
+
+  void process(float *input_buffer, float *output_buffer, unsigned int sample_count, const float highgain, float freq, float q)
+  {
+      const common_processing_result res = process_common(freq, q);
+
+      const float d0_high = calculate_d0_high(res);
+      
+      for (unsigned int sample_index = 0; sample_index < sample_count; ++sample_index)
+      { 
+        const float in = input_buffer[sample_index];
+
+        const float x = in - s.z1 - s.z2 + 1e-20f;
+        output_buffer[sample_index] = highgain * d0_high * x;
+        s.z2 += res.c2 * s.z1;
+        s.z1 += res.c1 * x;
+      }
+   }
+};
+
+struct bandpass
+{
+  state s;
+
+  void process(float *input_buffer, float *output_buffer, unsigned int sample_count, const float bandgain, float freq, float q)
+  {
+      const common_processing_result res = process_common(freq, q);
+
+      d1d0 d1d0_band = calculate_d1d0_band(res);
+      
+      for (unsigned int sample_index = 0; sample_index < sample_count; ++sample_index)
+      { 
+        const float in = input_buffer[sample_index];
+
+        const float x = in - s.z1 - s.z2 + 1e-20f;
+        output_buffer[sample_index] = bandgain * (d1d0_band.d0 * x + d1d0_band.d1 * s.z1);
+        s.z2 += res.c2 * s.z1;
+        s.z1 += res.c1 * x;
+      }
+   }
+};
+
+struct lowpass
+{
+  state s;
+
+  void process(float *input_buffer, float *output_buffer, unsigned int sample_count, const float lowgain, float freq, float q)
+  {
+      const common_processing_result res = process_common(freq, q);
+
+      const float d0_low = calculate_d0_low(res);
+      
+      for (unsigned int sample_index = 0; sample_index < sample_count; ++sample_index)
+      { 
+        const float in = input_buffer[sample_index];
+
+        const float x = in - s.z1 - s.z2 + 1e-20f;
+        s.z2 += res.c2 * s.z1;
+        output_buffer[sample_index] = lowgain * (d0_low * x + s.z2);
+        s.z1 += res.c1 * x;
+      }
+   }
+};
+
+} // namespace
+
+#endif
+
+
