@@ -2,13 +2,12 @@
 #include <lv2.h>
 
 
-#include "state-variable-filter/svh-v3.h"
+#include "state-variable-filter/svf-v2.h"
 #include "common.cc"
 
 struct svf {
     float *ports[7];
-    float z1;
-    float z2;
+    svf_v2::lowbandhighpass filter;
     float sample_rate;
     float freq;
     float q;
@@ -16,7 +15,7 @@ struct svf {
     float bandgain;
     float highgain;
     unsigned frame_index;
-    svf(float sample_rate) : z1(0.0f), z2(0.0f), sample_rate(sample_rate), freq(0.01f), q(0.5f), lowgain(0.0f), bandgain(0.0f), highgain(0.0f), frame_index(0) {
+    svf(float sample_rate) : sample_rate(sample_rate), freq(0.01f), q(0.5f), lowgain(0.0f), bandgain(0.0f), highgain(0.0f), frame_index(0) {
 
     }
 };
@@ -62,28 +61,7 @@ static void run(LV2_Handle instance, uint32_t sample_count)
         }
         ++(tinstance->frame_index);
  
-        const float w = 2.0f * tanf(M_PI * tinstance->freq);
-        const float a = w / tinstance->q;
-        const float b = w*w;
-        const float c1 = (a + b)/(1 + 0.5f*a + 0.25f * b);
-        const float c2 = b / (a + b);
-        
-        const float d0_high = 1.0f - 0.5f * c1 + c1 * c2 * 0.25f;
-        const float d1_band = 1.0f - c2;
-        const float d0_band = d1_band * c1 * 0.5f;
-        const float d0_low = c1 * c2 * 0.25f;
-    
-        const float in = tinstance->ports[0][sample_index];
-        float out = 0;
-
-        const float x = in - tinstance->z1 - tinstance->z2 + 1e-20f;
-        out += tinstance->highgain * d0_high * x;
-        out += tinstance->bandgain * (d0_band * x + d1_band * tinstance->z1);
-        tinstance->z2 += c2 * tinstance->z1;
-        out += tinstance->lowgain * (d0_low * x + tinstance->z2);
-        tinstance->z1 += c1 * x;
-
-        tinstance->ports[1][sample_index] = out;
+        tinstance->filter.process(tinstance->ports[0] + sample_index, tinstance->ports[1] + sample_index, 1, tinstance->highgain, tinstance->bandgain, tinstance->lowgain, tinstance->freq, tinstance->q);
     }
 }
 

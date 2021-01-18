@@ -1,4 +1,4 @@
-.PHONY: all install clean submodules
+.PHONY: all install clean
 
 VERSION = v2
 
