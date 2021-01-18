@@ -61,7 +61,17 @@ static void run(LV2_Handle instance, uint32_t sample_count)
         }
         ++(tinstance->frame_index);
  
-        tinstance->filter.process(tinstance->ports[0] + sample_index, tinstance->ports[1] + sample_index, 1, tinstance->highgain, tinstance->bandgain, tinstance->lowgain, tinstance->freq, tinstance->q);
+        tinstance->filter.process
+        (
+          tinstance->ports[0] + sample_index, 
+          tinstance->ports[1] + sample_index, 
+          1, 
+          tinstance->highgain, 
+          tinstance->bandgain, 
+          tinstance->lowgain, 
+          tinstance->freq, 
+          tinstance->q
+        );
     }
 }
 
