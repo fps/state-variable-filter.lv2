@@ -21,7 +21,7 @@ svf-$(VERSION).so: common.cc svf.cc submodules
 submodules:
 	make -C state-variable-filter
 
-install:
+install: all
 	install -d $(PREFIX)/svf-$(VERSION)
 	cp -f manifest.ttl svf.ttl svf-$(VERSION).so $(PREFIX)/svf-$(VERSION)
 

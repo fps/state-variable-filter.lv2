@@ -3,6 +3,7 @@
 @prefix doap: <http://usefulinc.com/ns/doap#> .
 @prefix units: <http://lv2plug.in/ns/extensions/units#> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix pprops: <http://lv2plug.in/ns/ext/port-props> .
 
 <http://fps.io/plugins/state-variable-filter-VERSION> a lv2:Plugin ;
   doap:name "state-variable-filter-VERSION";
@@ -36,6 +37,7 @@
     lv2:minimum 1.0 ;
     lv2:maximum 20000.0 ;
     units:unit units:hz ;
+    lv2:PortProperty pprops:logarithmic ;
   ] , [
     a lv2:InputPort ;
     a lv2:ControlPort ;
