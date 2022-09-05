@@ -3,7 +3,7 @@
 VERSION = v2
 
 PREFIX ?= /usr/local
-INSTALLDIR ?= $(PREFIX)/lv2
+INSTALLDIR ?= $(PREFIX)/lib/lv2
 
 all: svf-$(VERSION).so manifest.ttl svf.ttl
 
