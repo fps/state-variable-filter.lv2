@@ -2,7 +2,8 @@
 
 VERSION = v2
 
-PREFIX ?= /usr/local/lv2
+PREFIX ?= /usr/local
+INSTALLDIR ?= $(PREFIX)/lv2
 
 all: svf-$(VERSION).so manifest.ttl svf.ttl
 
@@ -22,8 +23,8 @@ submodules:
 	make -C state-variable-filter
 
 install: all
-	install -d $(PREFIX)/svf-$(VERSION)
-	cp -f manifest.ttl svf.ttl svf-$(VERSION).so $(PREFIX)/svf-$(VERSION)
+	install -d $(INSTALLDIR)/svf-$(VERSION)
+	cp -f manifest.ttl svf.ttl svf-$(VERSION).so $(INSTALLDIR)/svf-$(VERSION)
 
 clean:
 	rm -f manifest.ttl svf.ttl svf-$(VERSION).so svf.cc
